@@ -18,11 +18,15 @@ class VideoPlayerTableViewController: UITableViewController {
 
     let toolbar = UIToolbar()
 
+    var searchURL = String()
+
     override func viewDidLoad() {
 
         super.viewDidLoad()
 
         setUpSearchBar()
+
+        searchController.searchBar.delegate = self
 
         setUpToolBar()
 
@@ -34,17 +38,20 @@ class VideoPlayerTableViewController: UITableViewController {
 
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
+//
+//    override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+//        return 40.0
+//    }
+//
+//    override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+//        return 40.0
+//    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
@@ -52,7 +59,7 @@ class VideoPlayerTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return fullScreenSize.height
+        return fullScreenSize.height - 100.0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -60,13 +67,16 @@ class VideoPlayerTableViewController: UITableViewController {
         //swiftlint:disable force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "VideoPlayerTableViewCell", for: indexPath)
 
-        let videoURL = NSURL(string: "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8")
+        let videoURL = NSURL(string: self.searchURL)
+
         let player = AVPlayer(url: videoURL! as URL)
 
         let playerLayer = AVPlayerLayer(player: player)
+
         playerLayer.frame = cell.bounds
 
         cell.layer.addSublayer(playerLayer)
+
         player.play()
 
         return cell
@@ -99,12 +109,15 @@ class VideoPlayerTableViewController: UITableViewController {
         // 所以尺寸會與 tableView 的 header 一樣
         self.searchController.searchBar.sizeToFit()
 
+        self.searchController.searchBar.text = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"
+
         // 將搜尋框擺在 tableView 的 header
         self.tableView.tableHeaderView = self.searchController.searchBar
 
     }
-    
+
     func setUpToolBar() {
+
         let browserToolbar =  UIToolbar(frame:CGRect(x:0, y:20, width:320, height:44))
 
         browserToolbar.backgroundColor = UIColor.white
@@ -117,6 +130,20 @@ class VideoPlayerTableViewController: UITableViewController {
         browserToolbar.setItems([btn1, btn2, btn3, btn4], animated: false)
 
         self.tableView.tableFooterView = browserToolbar
+
+    }
+
+}
+
+extension VideoPlayerTableViewController: UISearchBarDelegate {
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    
+        guard let textToSearch = searchBar.text  else { return }
+
+        self.searchURL = textToSearch
+
+        self.tableView.reloadData()
 
     }
 

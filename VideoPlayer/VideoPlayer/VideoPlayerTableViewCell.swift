@@ -12,7 +12,7 @@ class VideoPlayerTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+
         setUpViews()
 
     }
@@ -25,7 +25,7 @@ class VideoPlayerTableViewCell: UITableViewCell {
 
     func setUpViews() {
 
-        self.bounds = CGRect(x: 0, y: 0, width: 375.0, height: 667.0)
+        self.backgroundColor = UIColor.brown
 
     }
 

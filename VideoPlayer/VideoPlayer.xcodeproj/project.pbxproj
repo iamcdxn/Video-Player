@@ -248,6 +248,7 @@
 				TargetAttributes = {
 					640491671F5FC7F100518D70 = {
 						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 4F2GX7DGQ7;
 						ProvisioningStyle = Automatic;
 					};
 					6404917B1F5FC7F200518D70 = {
@@ -608,6 +609,7 @@
 			baseConfigurationReference = 703FA7409EB38C94C65930DA /* Pods-VideoPlayer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4F2GX7DGQ7;
 				INFOPLIST_FILE = VideoPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = CdxN.io.VideoPlayer;
@@ -621,6 +623,7 @@
 			baseConfigurationReference = B937A04FC7710ECB590927ED /* Pods-VideoPlayer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4F2GX7DGQ7;
 				INFOPLIST_FILE = VideoPlayer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = CdxN.io.VideoPlayer;

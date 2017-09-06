@@ -15,11 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
+
+        let fullScreenSize = UIScreen.main.bounds.size
+
         window = UIWindow(frame: UIScreen.main.bounds)
+
         let homeViewController = VideoPlayerTableViewController()
+
+        homeViewController.view.frame = CGRect(x: 0.0, y: 20.0, width: fullScreenSize.width, height: fullScreenSize.height - 20)
+
         homeViewController.view.backgroundColor = UIColor.red
+
         window!.rootViewController = homeViewController
+
         window!.makeKeyAndVisible()
 
         return true
