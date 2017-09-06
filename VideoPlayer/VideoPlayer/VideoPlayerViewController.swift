@@ -10,14 +10,14 @@ import UIKit
 
 class VideoPlayerViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
+    var searchController: UISearchController!
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    let fullScreenSize = UIScreen.main.bounds.size
+
+    override func viewDidLoad() {
+
+        super.viewDidLoad()
+
     }
 
 }
