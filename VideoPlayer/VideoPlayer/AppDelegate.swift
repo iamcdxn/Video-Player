@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         homeViewController.view.frame = CGRect(x: 0.0, y: 20.0, width: fullScreenSize.width, height: fullScreenSize.height - 20)
 
-        homeViewController.view.backgroundColor = UIColor.red
+        homeViewController.view.backgroundColor = UIColor.black
 
         window!.rootViewController = homeViewController
 

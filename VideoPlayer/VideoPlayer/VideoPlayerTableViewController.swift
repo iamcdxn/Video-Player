@@ -20,6 +20,10 @@ class VideoPlayerTableViewController: UITableViewController {
 
     var searchURL = String()
 
+    var shouldPlay = true
+
+    var shouldmute = true
+
     override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -29,6 +33,10 @@ class VideoPlayerTableViewController: UITableViewController {
         searchController.searchBar.delegate = self
 
         setUpToolBar()
+
+        self.searchController.searchBar.barStyle = .black
+
+        self.tableView.tableFooterView?.backgroundColor = UIColor.black
 
         tableView.rowHeight = UITableViewAutomaticDimension
 
@@ -44,14 +52,6 @@ class VideoPlayerTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-//
-//    override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
-//        return 40.0
-//    }
-//
-//    override func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
-//        return 40.0
-//    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
@@ -59,59 +59,66 @@ class VideoPlayerTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+
         return fullScreenSize.height - 100.0
+
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         //swiftlint:disable force_cast
-        let cell = tableView.dequeueReusableCell(withIdentifier: "VideoPlayerTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "VideoPlayerTableViewCell", for: indexPath) as! VideoPlayerTableViewCell
+        //swiftlint:enable force_cast
 
-        let videoURL = NSURL(string: self.searchURL)
+        cell.player = AVPlayer(url: NSURL(string: self.searchURL)! as URL)
 
-        let player = AVPlayer(url: videoURL! as URL)
-
-        let playerLayer = AVPlayerLayer(player: player)
+        let playerLayer = AVPlayerLayer(player: cell.player)
 
         playerLayer.frame = cell.bounds
 
+        cell.player.addObserver(self, forKeyPath: "rate", options:NSKeyValueObservingOptions(), context: nil)
+
         cell.layer.addSublayer(playerLayer)
 
-        player.play()
+        cell.player.play()
+
+        cell.selectionStyle = .none
+
+        print(indexPath)
 
         return cell
 
     }
 
+    private func deallocObservers(player: AVPlayer) {
+        player.removeObserver(self, forKeyPath: "rate")
+    }
+
+    override  func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+
+        print("oberved")
+
+    }
+
     func setUpSearchBar() {
 
-        // 建立 UISearchController 並設置搜尋控制器為 nil
         self.searchController =
             UISearchController(searchResultsController: nil)
 
-        // 將更新搜尋結果的對象設為 self
         self.searchController.searchResultsUpdater = self as? UISearchResultsUpdating
 
-        // 搜尋時是否隱藏 NavigationBar
-        // 這個範例沒有使用 NavigationBar 所以設置什麼沒有影響
         self.searchController
             .hidesNavigationBarDuringPresentation = false
 
-        // 搜尋時是否使用燈箱效果 (會將畫面變暗以集中搜尋焦點)
         self.searchController
             .dimsBackgroundDuringPresentation = false
 
-        // 搜尋框的樣式
         self.searchController.searchBar.searchBarStyle = .prominent
 
-        // 設置搜尋框的尺寸為自適應
-        // 因為會擺在 tableView 的 header
-        // 所以尺寸會與 tableView 的 header 一樣
         self.searchController.searchBar.sizeToFit()
 
         self.searchController.searchBar.text = "http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"
 
-        // 將搜尋框擺在 tableView 的 header
         self.tableView.tableHeaderView = self.searchController.searchBar
 
     }
@@ -120,16 +127,65 @@ class VideoPlayerTableViewController: UITableViewController {
 
         let browserToolbar =  UIToolbar(frame:CGRect(x:0, y:20, width:320, height:44))
 
-        browserToolbar.backgroundColor = UIColor.white
+        browserToolbar.backgroundColor = UIColor.black
 
-        let btn1 =  UIBarButtonItem(barButtonSystemItem:.compose, target:nil, action:nil);
-        let btn2 =  UIBarButtonItem(barButtonSystemItem:.add, target:nil, action:nil);
-        let btn3 =  UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target:nil, action:nil);
-        let btn4 =  UIBarButtonItem(barButtonSystemItem:.reply, target:nil, action:nil);
+        let playPauseButton = UIBarButtonItem(title: "Play", style: .plain, target: self, action: #selector(playPause))
 
-        browserToolbar.setItems([btn1, btn2, btn3, btn4], animated: false)
+        playPauseButton.tintColor = UIColor.white
+
+        let space =  UIBarButtonItem(barButtonSystemItem:.flexibleSpace, target:nil, action: nil)
+
+        let muteButton =  UIBarButtonItem(title: "mute", style: .plain, target: self, action: #selector(muteUnmute))
+
+        muteButton.tintColor = UIColor.white
+
+        browserToolbar.setItems([playPauseButton, space, muteButton], animated: false)
 
         self.tableView.tableFooterView = browserToolbar
+
+    }
+
+    func playPause() {
+
+        print("PlayPause")
+
+        guard let videoCell = self.tableView.cellForRow(at: [0, 0]) as? VideoPlayerTableViewCell else { return }
+
+        if shouldPlay {
+
+            videoCell.player.pause()
+
+            shouldPlay = false
+
+        } else {
+
+            videoCell.player.play()
+
+            shouldPlay = true
+
+        }
+
+    }
+
+    func muteUnmute() {
+
+        print("Mute / Unmute")
+
+        guard let videoCell = self.tableView.cellForRow(at: [0, 0]) as? VideoPlayerTableViewCell else { return }
+
+        if shouldPlay {
+
+            videoCell.player.isMuted = true
+
+            shouldmute = false
+
+        } else {
+
+            videoCell.player.isMuted = false
+
+            shouldmute = true
+
+        }
 
     }
 
@@ -138,7 +194,7 @@ class VideoPlayerTableViewController: UITableViewController {
 extension VideoPlayerTableViewController: UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    
+
         guard let textToSearch = searchBar.text  else { return }
 
         self.searchURL = textToSearch
